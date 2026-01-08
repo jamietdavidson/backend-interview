@@ -2,6 +2,20 @@
 
 A FastAPI application for managing meetings, notes, and tasks.
 
+## Your task
+
+Implement all endpoints through a service layer and write it to the database, then assert that you can read it again.
+
+To do this:
+
+- Add authentication. Do this however you would like (external libraries are allowed). Keep it as simple as possible though.
+- Create a service per resource that all implement a base service class.
+- Put all of the services into a service mesh. Call's between each service should route through the mesh.
+- The service mesh is user specific, and should should support caching.
+- The mesh should support local development, and cloud development, and should be composable in order to accomplish this. Ie, local development is in memory, but in production the service mesh might allow gRPC connections between services seamlessly in production. Note you do not need to support gRPC for this task - but design this in such a way that the communication mode between services is easily interchangeable.
+- Create a decorator that can be placed on each service. This decorator allows us to call service_mesh.get_tools(), which can be passed onwards to an LLM.
+- The service mesh (and the services within in) should only be able to access resources that only the user making the request.
+
 ## Features
 
 - **Users**: Create and manage users who attend meetings
