@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException
-from typing import List
+from fastapi import FastAPI, HTTPException, Query
+from typing import List, Optional
+from datetime import datetime
 import schemas
 
 app = FastAPI(
@@ -69,7 +70,6 @@ async def get_meeting(meeting_id: int):
     Get a specific meeting with all details (attendees, notes, tasks).
     """
     # Stub: Return a mock meeting with details
-    from datetime import datetime
     return schemas.MeetingWithDetails(
         id=meeting_id,
         title="Team Standup",
@@ -88,7 +88,6 @@ async def update_meeting(meeting_id: int, meeting: schemas.MeetingUpdate):
     Update a meeting.
     """
     # Stub: Return a mock updated meeting
-    from datetime import datetime
     return schemas.Meeting(
         id=meeting_id,
         title=meeting.title or "Updated Meeting",
@@ -115,7 +114,6 @@ async def create_note(note: schemas.NoteCreate):
     Create a new note for a meeting.
     """
     # Stub: Return a mock note
-    from datetime import datetime
     return schemas.Note(
         id=1,
         content=note.content,
@@ -125,7 +123,7 @@ async def create_note(note: schemas.NoteCreate):
 
 
 @app.get("/notes/", response_model=List[schemas.Note])
-async def list_notes(meeting_id: int = None):
+async def list_notes(meeting_id: Optional[int] = Query(None)):
     """
     List all notes, optionally filtered by meeting_id.
     """
@@ -139,7 +137,6 @@ async def get_note(note_id: int):
     Get a specific note by ID.
     """
     # Stub: Return a mock note
-    from datetime import datetime
     return schemas.Note(
         id=note_id,
         content="Sample note content",
@@ -155,7 +152,6 @@ async def create_task(task: schemas.TaskCreate):
     Create a new task that is due at a specific meeting.
     """
     # Stub: Return a mock task
-    from datetime import datetime
     return schemas.Task(
         id=1,
         title=task.title,
@@ -167,7 +163,7 @@ async def create_task(task: schemas.TaskCreate):
 
 
 @app.get("/tasks/", response_model=List[schemas.Task])
-async def list_tasks(meeting_id: int = None, status: str = None):
+async def list_tasks(meeting_id: Optional[int] = Query(None), status: Optional[str] = Query(None)):
     """
     List all tasks, optionally filtered by meeting_id or status.
     """
@@ -181,7 +177,6 @@ async def get_task(task_id: int):
     Get a specific task by ID.
     """
     # Stub: Return a mock task
-    from datetime import datetime
     return schemas.Task(
         id=task_id,
         title="Sample task",
@@ -198,7 +193,6 @@ async def update_task(task_id: int, task: schemas.TaskUpdate):
     Update a task (e.g., change status, reassign to different meeting).
     """
     # Stub: Return a mock updated task
-    from datetime import datetime
     return schemas.Task(
         id=task_id,
         title=task.title or "Updated task",
