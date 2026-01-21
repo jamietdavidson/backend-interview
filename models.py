@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Table
 from sqlalchemy.orm import declarative_base, relationship
-from datetime import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
 
@@ -19,9 +19,11 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
+    owner_id = Column(Integer, ForeignKey('users.id'), index=True, nullable=True)
     
     # Relationships
     meetings = relationship('Meeting', secondary=meeting_users, back_populates='attendees')
+    owned_users = relationship('User', remote_side=[id])
 
 
 class Meeting(Base):
@@ -31,7 +33,8 @@ class Meeting(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
     scheduled_time = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    owner_id = Column(Integer, ForeignKey('users.id'), index=True, nullable=False)
     
     # Relationships
     attendees = relationship('User', secondary=meeting_users, back_populates='meetings')
@@ -44,8 +47,9 @@ class Note(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     meeting_id = Column(Integer, ForeignKey('meetings.id'), nullable=False)
+    owner_id = Column(Integer, ForeignKey('users.id'), index=True, nullable=False)
     
     # Relationships
     meeting = relationship('Meeting', back_populates='notes')
@@ -58,8 +62,9 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
     status = Column(String, default='pending')  # pending, completed, cancelled
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     due_meeting_id = Column(Integer, ForeignKey('meetings.id'), nullable=False)
+    owner_id = Column(Integer, ForeignKey('users.id'), index=True, nullable=False)
     
     # Relationships
     due_meeting = relationship('Meeting', back_populates='tasks', foreign_keys=[due_meeting_id])
